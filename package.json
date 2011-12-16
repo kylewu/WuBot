@@ -1,0 +1,12 @@
+{
+  "name":        "mozbot",
+  "version":     "0.0.1",
+  "author":      "wwu",
+  "keywords":    "irc bot mozilla wwu",
+  "description": "A simple robot for mozilla irc",
+
+  "dependencies": {
+    "irc": "0.3.2",
+    "scoped-http-client": "0.9.4"
+  }
+}
