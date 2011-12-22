@@ -3,7 +3,7 @@ Fs = require 'fs'
 Path = require 'path'
 
 irc_server = 'irc.mozilla.org'
-irc_rooms = ['#mozilla_cn',]
+irc_rooms = ['#nodetest',]
 #moz_room = '#mozilla_cn'
 #irc_server = 'irc.freenode.net'
 #irc_rooms = ['#ubuntu-cn',]
@@ -30,23 +30,23 @@ class IRCBot
 		@bot = new Irc.Client irc_server, @name, realName: 'MozBot', autoConnect: false, debug: true, showErrors: true
 
 		# Add listener
-		@bot.addListener 'message', (from, to, message) =>
+		@bot.addListener 'message', (nick, room, message) =>
 			# leave private message to pm listener
-			if to == @name
-				console.log 'private message to me'
+			if room == @name
 				return
 			##### to is #roomname
 
-			console.log 'from ' + from + ' to ' + to + ' message ' + message
+			console.log 'from ' + nick + ' room ' + room + ' message ' + message
 
 			for lsn in @pub_listeners
 				try
-					lsn.handle @, message, from
+					lsn.handle @, message, nick, room
 				catch ex
 					console.error "error occurs when handler message #{ex}"
 
 		@bot.addListener 'pm', (nick, message) =>
 
+			console.log 'private message to me'
 			for lsn in @pri_listeners
 				try
 					lsn.handle @, message, nick
@@ -104,13 +104,16 @@ class IRCBot
 class Listener
 	constructor: (@regx, @callback, @admin) ->
 	
-	handle: (bot, text, from) ->
-		if @admin and not (from in bot.admins)
+	handle: (bot, text, nick, room=null) ->
+		if @admin and not (nick in bot.admins)
 			console.log (from + ' tried admin cmd')
 			return
-		#console.log text, from, @regx
+		#console.log text, nick, @regx
 		#console.log text.match @regx
 		if match = text.match @regx
-			@callback bot, from, text, match
+			if room?
+				@callback bot, room, nick, text, match
+			else
+				@callback bot, nick, text, match
 
 module.exports = IRCBot

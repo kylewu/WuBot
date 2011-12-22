@@ -5,7 +5,7 @@ module.exports =
 
 	help: 'anything'
 	func: (bot) ->
-		bot.all /.*/, (bot, from, text, match) ->
+		bot.all /.*/, (bot, room, nick, text, match) ->
 			console.log 'public text ', text
 		
 		bot.privacy /.*/, (bot, from, text, match) ->
