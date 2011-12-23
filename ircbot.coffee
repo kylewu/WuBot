@@ -77,9 +77,9 @@ class IRCBot
 		@pri_listeners.push lsn
 	
 	# Listen from all
-	all : (regx, callback) ->
+	all : (regx, callback, admin=false) ->
 		console.log ('new listen ' + regx)
-		lsn = new Listener(regx, callback)
+		lsn = new Listener(regx, callback, admin)
 		@pub_listeners.push lsn
 
 	# Load sripts in a folder
@@ -108,8 +108,6 @@ class Listener
 		if @admin and not (nick in bot.admins)
 			console.log (from + ' tried admin cmd')
 			return
-		#console.log text, nick, @regx
-		#console.log text.match @regx
 		if match = text.match @regx
 			if room?
 				@callback bot, room, nick, text, match
